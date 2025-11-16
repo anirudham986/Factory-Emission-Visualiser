@@ -30,7 +30,7 @@ Factory-Emission-Visualizer/
  ├── anomaly.py
  ├── fetchLST.py
  ├── folium_map.py
- ├── key.json              # GEE service account credentials (DO NOT COMMIT)
+ └── key.json            # GEE service account credentials (DO NOT COMMIT)
 ```
 
 ---
@@ -39,47 +39,46 @@ Factory-Emission-Visualizer/
 
 ### **1. app.py — Main Application (Streamlit UI)**
 
-* Handles user input (latitude & longitude)
-* Fetches LST data through Google Earth Engine
-* Runs anomaly detection
-* Computes emission severity score
-* Renders heatmap + markers on an interactive map
+* Takes user input (latitude & longitude)
+* Fetches LST data from Google Earth Engine
+* Runs anomaly detection and computes emission score
 * Displays metrics (max/min/mean LST, anomaly count, emission score)
+* Renders an interactive Folium-based heatmap
 
-> **This is the file you run — the full workflow starts here.**
+> **This is the main entry point of the project.**
 
 ---
 
 ### **2. anomaly.py — ML-Based Temperature Anomaly Detector**
 
-* Downloads `.npy` LST grid
-* Filters NaN and invalid pixels
-* Detects abnormal temperature hotspots using **Isolation Forest**
-* Calculates a **severity score (0–100)** based on intensity & density of anomalies
+* Downloads `.npy` temperature grid
+* Removes invalid pixels
+* Detects hotspots using **Isolation Forest**
+* Generates a **0–100 emission severity score**
 
-> **This is the intelligence layer of your project.**
+> **The core intelligence/ML logic lives here.**
 
 ---
 
 ### **3. fetchLST.py — Google Earth Engine Data Fetcher**
 
-* Initializes Earth Engine with a service account
-* Pulls cloud-free Landsat-9 LST data (last 30 days)
-* Converts raw DN → Kelvin → °C
-* Exports LST as a downloadable `.npy` array
+* Authenticates using a service account
+* Filters Landsat-9 LST images (cloud-free, last 30 days)
+* Converts DN → Kelvin → °C
+* Produces a downloadable `.npy` array
 
-> **This module brings real satellite data into your app.**
+> **This module retrieves real satellite data.**
 
 ---
 
 ### **4. folium_map.py — Geospatial Visualization Engine**
 
-* Plots LST grid with Matplotlib
-* Highlights anomaly pixels in cyan
-* Converts plot → base64 → Folium overlay
-* Renders an interactive map with factory marker
+* Uses Matplotlib to render temperature heatmap
+* Highlights anomaly pixels
+* Converts plot into base64 image
+* Displays it as a Folium overlay with markers
 
-> **This is what makes the results visually understandable.**
+> **This file generates the interactive visual output.**
 
 ---
 
@@ -87,13 +86,15 @@ Factory-Emission-Visualizer/
 
 ### 1. Install dependencies
 
+Manually install the required libraries:
+
 ```bash
-pip install -r requirements.txt
+pip install streamlit folium scikit-learn numpy matplotlib google-earth-engine
 ```
 
 ### 2. Add your Earth Engine credentials
 
-Place your **key.json** file in the project directory.
+Place your **key.json** file in the project folder.
 
 ### 3. Run the Streamlit app
 
@@ -110,24 +111,22 @@ Latitude: 20.95150000
 Longitude: 85.21570000
 ```
 
-Click **Analyze Emissions**.
+Click **Analyze Emissions** to view:
 
-You will see:
-
-* LST heatmap
-* Highlighted anomaly pixels
+* Heatmap overlay
+* Detected anomaly pixels
 * Emission severity score
-* Summary metrics
+* Summary statistics
 
 ---
 
 ## 📌 Future Improvements
 
-* Time-series emission trends
-* Multi-factory comparison dashboard
-* Automatic pollutant classification
-* Integration with government pollution APIs
-* Threshold-based alert system
+* Time-series anomaly tracking
+* Multi-factory comparison
+* High-resolution LST (ECOSTRESS) support
+* Automated pollution alerts
+* Historical emission reporting dashboard
 
 ---
 
